@@ -22,7 +22,7 @@ export default class Game {
     this.paddle = new Paddle(this);
     this.ball = new Ball(this);
 
-    this.bricks = buildLevel(this, levels, this.brickSize);
+    this.bricks = buildLevel(this, levels[1], this.brickSize);
 
     this.gameObjects = [this.paddle, this.ball];
 
