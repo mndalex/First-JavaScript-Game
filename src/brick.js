@@ -7,6 +7,8 @@ export default class Brick {
     this.position = position;
 
     this.size = game.brickSize;
+
+    this.destroyed = false;
   }
 
   update(dt) {}

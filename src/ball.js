@@ -34,8 +34,6 @@ export default class Ball {
     this.detectCollisionWithWall();
     this.detectCollisionWithPaddle();
     this.detectCollisionWithBricks();
-
-    console.log("----------------");
   }
 
   detectCollisionWithWall = function() {
@@ -56,7 +54,7 @@ export default class Ball {
       this.speed.y = -this.speed.y;
       this.position.y = 0;
     }
-  }
+  };
 
   detectCollisionWithPaddle = function() {
     let bottomOfBall = this.position.y + this.size.y;
@@ -76,12 +74,69 @@ export default class Ball {
       if (this.speed.x * this.game.paddle.speed < 0)
         this.speed.x = -this.speed.x;
       this.speed.y = -this.speed.y;
-      this.position.y =
-        this.game.paddle.position.y - this.size.y;
+      this.position.y = this.game.paddle.position.y - this.size.y;
     }
-  }
+  };
 
-  detectCollisionWithBricks() {
+  detectCollisionWithBricks = function() {
+    let bricks = this.collectHittedBricks();
+
+    bricks.forEach(brick => {
+      if (brick && !brick.destroyed) {
+        let topOfBrick = brick.position.y;
+        let bottomOfBrick = brick.position.y + brick.size;
+        let leftSideOfBrick = brick.position.x;
+        let rightSideOfBrick = brick.position.x + brick.size;
+
+        brick.destroyed = true;
+        this.game.deleteBrickByPosition(brick.position);
+
+        let topOfBall = this.position.y;
+        let bottomOfBall = this.position.y + this.size.y;
+        let leftSideOfBall = this.position.x;
+        let rightSideOfBall = this.position.x + this.size.x;
+
+        let deltaTop = Math.abs(topOfBrick - bottomOfBall);
+        let deltaBottom = Math.abs(bottomOfBrick - topOfBall);
+        let deltaLeftSide = Math.abs(
+          leftSideOfBrick - rightSideOfBall
+        );
+        let deltaRightSide = Math.abs(
+          rightSideOfBrick - leftSideOfBall
+        );
+
+        let minDelta = Math.min(
+          deltaTop,
+          deltaBottom,
+          deltaLeftSide,
+          deltaRightSide
+        );
+
+        if (deltaTop == minDelta) {
+          // console.log("top");
+          this.position.y -= deltaTop;
+          this.speed.y = -Math.abs(this.speed.y);
+        }
+        if (deltaBottom == minDelta) {
+          // console.log("bottom:");
+          this.position.y += deltaBottom;
+          this.speed.y = Math.abs(this.speed.y);
+        }
+        if (deltaLeftSide == minDelta) {
+          // console.log("left");
+          this.position.x -= deltaLeftSide;
+          this.speed.x = -Math.abs(this.speed.x);
+        }
+        if (deltaRightSide == minDelta) {
+          // console.log("right");
+          this.position.x += deltaRightSide;
+          this.speed.x = Math.abs(this.speed.x);
+        }
+      }
+    });
+  };
+
+  collectHittedBricks = function() {
     let bricks = [];
 
     //top left direction
@@ -184,56 +239,6 @@ export default class Ball {
       );
     }
 
-    bricks.forEach(brick => {
-      if (brick) {
-        let topOfBrick = brick.position.y;
-        let bottomOfBrick = brick.position.y + brick.size;
-        let leftSideOfBrick = brick.position.x;
-        let rightSideOfBrick =
-          brick.position.x + brick.size;
-
-        let topOfBall = this.position.y;
-        let bottomOfBall = this.position.y + this.size.y;
-        let leftSideOfBall = this.position.x;
-        let rightSideOfBall = this.position.x + this.size.x;
-
-        let deltaTop = Math.abs(topOfBrick - bottomOfBall);
-        let deltaBottom = Math.abs(
-          bottomOfBrick - topOfBall
-        );
-        let deltaLeftSide = Math.abs(
-          leftSideOfBrick - rightSideOfBall
-        );
-        let deltaRightSide = Math.abs(
-          rightSideOfBrick - leftSideOfBall
-        );
-
-        let minDelta = Math.min(
-          deltaTop,
-          deltaBottom,
-          deltaLeftSide,
-          deltaRightSide
-        );
-
-        if (deltaTop == minDelta) {
-          // console.log("top");
-          this.speed.y = -Math.abs(this.speed.y);
-        }
-        if (deltaBottom == minDelta) {
-          // console.log("bottom");
-          this.speed.y = Math.abs(this.speed.y);
-        }
-        if (deltaLeftSide == minDelta) {
-          // console.log("left");
-          this.speed.x = -Math.abs(this.speed.x);
-        }
-        if (deltaRightSide == minDelta) {
-          // console.log("right");
-          this.speed.x = Math.abs(this.speed.x);
-        }
-
-        this.game.deleteBrickByPosition(brick.position);
-      }
-    });
-  }
+    return bricks;
+  };
 }
