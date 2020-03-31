@@ -14,7 +14,7 @@ export default class Ball {
       y: this.game.paddle.position.y
     };
 
-    this.speed = { x: 200, y: 200 };
+    this.speed = { x: 200, y: -200 };
   }
 
   draw(ctx) {
