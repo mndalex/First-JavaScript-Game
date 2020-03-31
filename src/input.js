@@ -37,6 +37,13 @@ export default class ImputHandler {
             game.restart();
         }
       }
+
+      if(game.gameState === GAME_STATES.ALL_LEVEL_COMPLETED){
+        switch(event.keyCode){
+          case 32:
+            game.restart();
+        }
+      }
     });
 
     document.addEventListener("keyup", event => {

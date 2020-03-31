@@ -150,6 +150,11 @@ export default class Game {
       this.gameWidth / 2,
       this.gameHeight / 2
     );
+    ctx.fillText(
+      "Press SPACE to restart.",
+      this.gameWidth / 2,
+      this.gameHeight / 2 + 35
+    );
   };
 
   drawGameOverScene = function(ctx) {
