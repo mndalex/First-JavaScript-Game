@@ -1,3 +1,5 @@
+import {GAME_STATES} from "./game_states.js"
+
 export default class Ball {
   constructor(game) {
     this.img = document.getElementById("ball-img");
@@ -47,8 +49,7 @@ export default class Ball {
     }
 
     if (this.position.y + this.size.y >= this.gameHeight) {
-      this.speed.y = -this.speed.y;
-      this.position.y = this.gameHeight - this.size.y;
+      this.game.gameState = GAME_STATES.GAME_OVER;
     }
     if (this.position.y <= 0) {
       this.speed.y = -this.speed.y;

@@ -1,4 +1,4 @@
-export const GAME_STATE = {
+export const GAME_STATES = {
   RUNNING: 1,
   PAUSED: 2,
   GAME_OVER: 3,

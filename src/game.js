@@ -2,7 +2,7 @@ import Paddle from "./paddle.js";
 import Ball from "./ball.js";
 import InputHandler from "./input.js";
 import { buildLevel, levels } from "./levels.js";
-import { GAME_STATE } from "./game_states.js";
+import { GAME_STATES } from "./game_states.js";
 
 export default class Game {
   constructor(gameWidth, gameHeight, brickSize) {
@@ -10,7 +10,7 @@ export default class Game {
     this.gameWidth = gameWidth;
     this.brickSize = brickSize;
 
-    this.gameState = GAME_STATE.RUNNING;
+    this.gameState = GAME_STATES.RUNNING;
     this.level = 0;
   }
 
@@ -26,24 +26,29 @@ export default class Game {
   }
 
   update(dt) {
-    if (this.gameState === GAME_STATE.RUNNING) {
+    if (this.gameState === GAME_STATES.RUNNING) {
       if (Object.keys(this.bricks).length === 0)
         if (levels.length - 1 > this.level)
-          this.gameState = GAME_STATE.LEVEL_COMPLETED;
-        else this.gameState = GAME_STATE.ALL_LEVEL_COMPLETED;
+          this.gameState = GAME_STATES.LEVEL_COMPLETED;
+        else this.gameState = GAME_STATES.ALL_LEVEL_COMPLETED;
 
       this.gameObjects.forEach(object => object.update(dt));
     }
   }
 
   draw(ctx) {
-    if (this.gameState === GAME_STATE.LEVEL_COMPLETED) {
-      this.drawLevelCompleted(ctx);
+    if (this.gameState === GAME_STATES.LEVEL_COMPLETED) {
+      this.drawLevelCompletedScene(ctx);
       return;
     }
 
-    if (this.gameState === GAME_STATE.ALL_LEVEL_COMPLETED) {
-      this.drawAllLevelCompleted(ctx);
+    if (this.gameState === GAME_STATES.ALL_LEVEL_COMPLETED) {
+      this.drawAllLevelCompletedScene(ctx);
+      return;
+    }
+
+    if (this.gameState === GAME_STATES.GAME_OVER) {
+      this.drawGameOverScene(ctx);
       return;
     }
 
@@ -53,16 +58,16 @@ export default class Game {
 
     this.gameObjects.forEach(object => object.draw(ctx));
 
-    if (this.gameState == GAME_STATE.PAUSED) {
+    if (this.gameState == GAME_STATES.PAUSED) {
       this.drawPauseMenu(ctx);
     }
   }
 
   togglePause() {
-    if (this.gameState === GAME_STATE.PAUSED) {
-      this.gameState = GAME_STATE.RUNNING;
+    if (this.gameState === GAME_STATES.PAUSED) {
+      this.gameState = GAME_STATES.RUNNING;
     } else {
-      this.gameState = GAME_STATE.PAUSED;
+      this.gameState = GAME_STATES.PAUSED;
     }
   }
 
@@ -70,7 +75,11 @@ export default class Game {
     this.loadlevel(++this.level);
     this.resetPaddle();
     this.resetBall();
-    this.gameState = GAME_STATE.RUNNING;
+    this.gameState = GAME_STATES.RUNNING;
+  }
+
+  restart(){
+    location.reload();
   }
 
   getBrickByPosition(x, y) {
@@ -110,7 +119,7 @@ export default class Game {
     }
   };
 
-  drawLevelCompleted = function(ctx) {
+  drawLevelCompletedScene = function(ctx) {
     ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
     ctx.fillRect(0, 0, this.gameWidth, this.gameHeight);
 
@@ -129,7 +138,7 @@ export default class Game {
     );
   };
 
-  drawAllLevelCompleted = function(ctx) {
+  drawAllLevelCompletedScene = function(ctx) {
     ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
     ctx.fillRect(0, 0, this.gameWidth, this.gameHeight);
 
@@ -140,6 +149,25 @@ export default class Game {
       "All Level Completed!",
       this.gameWidth / 2,
       this.gameHeight / 2
+    );
+  };
+
+  drawGameOverScene = function(ctx) {
+    ctx.fillStyle = "red";
+    ctx.fillRect(0, 0, this.gameWidth, this.gameHeight);
+
+    ctx.font = "30px Arial";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    ctx.fillText(
+      "Game Over!",
+      this.gameWidth / 2,
+      this.gameHeight / 2
+    );
+    ctx.fillText(
+      "Press SPACE to restart.",
+      this.gameWidth / 2,
+      this.gameHeight / 2 + 35
     );
   };
 

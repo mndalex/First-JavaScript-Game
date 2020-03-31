@@ -1,10 +1,10 @@
-import { GAME_STATE } from "./game_states.js";
+import { GAME_STATES } from "./game_states.js";
 
 export default class ImputHandler {
   constructor(paddle, game) {
     document.addEventListener("keydown", event => {
       // console.log(event.keyCode)
-      if (game.gameState === GAME_STATE.RUNNING) {
+      if (game.gameState === GAME_STATES.RUNNING) {
         switch (event.keyCode) {
           case 37:
             paddle.moveLeft();
@@ -17,17 +17,24 @@ export default class ImputHandler {
           case 32:
             game.togglePause();
         }
-      } else if (game.gameState === GAME_STATE.PAUSED) {
+      } else if (game.gameState === GAME_STATES.PAUSED) {
         switch (event.keyCode) {
           case 32:
             game.togglePause();
         }
       }
 
-      if(game.gameState === GAME_STATE.LEVEL_COMPLETED){
+      if(game.gameState === GAME_STATES.LEVEL_COMPLETED){
         switch(event.keyCode){
           case 32:
             game.loadNextLevel();
+        }
+      }
+
+      if(game.gameState === GAME_STATES.GAME_OVER){
+        switch(event.keyCode){
+          case 32:
+            game.restart();
         }
       }
     });
